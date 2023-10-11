@@ -1,0 +1,47 @@
+// arduino
+
+void setup() {
+  Serial.begin(9600);
+}
+
+double th(int v) {
+  double t;
+  t = log(((10240000/v) - 10000));
+  t = 1 /(0.001129148 + (0.000234125*t) + (0.0000000876741*t*t*t));
+  t = t - 273.15; // 화씨를 섭씨로 바꾸어줌
+  return t;
+}
+
+void loop() {
+  int a = analogRead(A0);
+  Serial.println(th(a));
+  delay(500);
+}
+
+
+// processing
+
+import processing.serial.*;
+Serial p;
+
+void setup(){
+  p = new Serial(this, "COM3", 9600);
+  size(400, 400);
+}
+
+void draw(){
+  if(p.available() > 0){
+    String m = p.readStringUntil('\n');
+
+    if(m != null){
+      print(m);
+
+      if(float(m) > 28.0) {
+        background(255, 0, 0);
+      }
+      else {
+        background(0, 255, 0);
+      }
+    }
+  }
+}
